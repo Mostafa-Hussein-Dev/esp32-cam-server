@@ -2830,3 +2830,26 @@
 18702	19020	7722145632143202	C:/Users/MostafaHussein/Desktop/Embedded Systems Project/esp32_cam_server/build/.bin_timestamp	e64929e514305763
 19021	19114	7722145632213580	esp-idf/esptool_py/CMakeFiles/app_check_size	ca58f66b2b42b692
 19021	19114	7722145632213580	C:/Users/MostafaHussein/Desktop/Embedded Systems Project/esp32_cam_server/build/esp-idf/esptool_py/CMakeFiles/app_check_size	ca58f66b2b42b692
+171	346	7722195966604729	bootloader-prefix/src/bootloader-stamp/bootloader-build	3655bf6dc1ecc3cf
+171	346	7722195966604729	bootloader/bootloader.elf	3655bf6dc1ecc3cf
+171	346	7722195966604729	bootloader/bootloader.bin	3655bf6dc1ecc3cf
+171	346	7722195966604729	bootloader/bootloader.map	3655bf6dc1ecc3cf
+171	346	7722195966604729	C:/Users/MostafaHussein/Desktop/Embedded Systems Project/esp32_cam_server/build/bootloader-prefix/src/bootloader-stamp/bootloader-build	3655bf6dc1ecc3cf
+171	346	7722195966604729	C:/Users/MostafaHussein/Desktop/Embedded Systems Project/esp32_cam_server/build/bootloader/bootloader.elf	3655bf6dc1ecc3cf
+171	346	7722195966604729	C:/Users/MostafaHussein/Desktop/Embedded Systems Project/esp32_cam_server/build/bootloader/bootloader.bin	3655bf6dc1ecc3cf
+171	346	7722195966604729	C:/Users/MostafaHussein/Desktop/Embedded Systems Project/esp32_cam_server/build/bootloader/bootloader.map	3655bf6dc1ecc3cf
+347	390	7722195968360672	bootloader-prefix/src/bootloader-stamp/bootloader-install	2bef3c0d68ec693b
+347	390	7722195968360672	C:/Users/MostafaHussein/Desktop/Embedded Systems Project/esp32_cam_server/build/bootloader-prefix/src/bootloader-stamp/bootloader-install	2bef3c0d68ec693b
+391	477	7722195969593978	CMakeFiles/bootloader-complete	bca7589b264dab53
+391	477	7722195969593978	bootloader-prefix/src/bootloader-stamp/bootloader-done	bca7589b264dab53
+391	477	7722195969593978	C:/Users/MostafaHussein/Desktop/Embedded Systems Project/esp32_cam_server/build/CMakeFiles/bootloader-complete	bca7589b264dab53
+391	477	7722195969593978	C:/Users/MostafaHussein/Desktop/Embedded Systems Project/esp32_cam_server/build/bootloader-prefix/src/bootloader-stamp/bootloader-done	bca7589b264dab53
+162	909	7722195966519243	esp-idf/main/CMakeFiles/__idf_main.dir/main.c.obj	49b092faf1f39785
+909	1020	7722195973977720	esp-idf/main/libmain.a	f66e08feb4fa4e17
+1021	11798	7722196082362713	esp-idf/esp_system/ld/sections.ld	a1c7c4f285a45ce3
+1021	11798	7722196082362713	C:/Users/MostafaHussein/Desktop/Embedded Systems Project/esp32_cam_server/build/esp-idf/esp_system/ld/sections.ld	a1c7c4f285a45ce3
+11799	18617	7722196082883868	esp32_cam_server.elf	767c1d662c0d822b
+18618	18934	7722196154137423	.bin_timestamp	e64929e514305763
+18618	18934	7722196154137423	C:/Users/MostafaHussein/Desktop/Embedded Systems Project/esp32_cam_server/build/.bin_timestamp	e64929e514305763
+18934	19037	7722196154237643	esp-idf/esptool_py/CMakeFiles/app_check_size	ca58f66b2b42b692
+18934	19037	7722196154237643	C:/Users/MostafaHussein/Desktop/Embedded Systems Project/esp32_cam_server/build/esp-idf/esptool_py/CMakeFiles/app_check_size	ca58f66b2b42b692

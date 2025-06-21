@@ -486,7 +486,7 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
             esp_ble_adv_data_t adv_data = {
                 .set_scan_rsp = false,
                 .include_name = true,
-                .include_txpower = false,
+                .include_txpower = true,
                 .min_interval = 0x0006,
                 .max_interval = 0x0010,
                 .appearance = 0x00,
