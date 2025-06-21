@@ -448,10 +448,19 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
                 .len = ESP_UUID_LEN_16,
                 .uuid.uuid16 = BLE_CAMERA_CHAR_CONTROL_UUID
             };
+            esp_attr_value_t char_val = {
+                .attr_max_len = 64,
+                .attr_len = 0,
+                .attr_value = NULL,
+            };
+            esp_attr_control_t control = {
+                .auto_rsp = ESP_GATT_AUTO_RSP,
+            };
             esp_ble_gatts_add_char(service_handle, &char_control_uuid,
-                                  ESP_GATT_PERM_WRITE,
-                                  ESP_GATT_CHAR_PROP_BIT_WRITE,
-                                  NULL, NULL);
+                        ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE,  // Both read AND write permission
+                        ESP_GATT_CHAR_PROP_BIT_WRITE,               // Write property
+                        &char_val, &control);
+
             
             esp_bt_uuid_t char_status_uuid = {
                 .len = ESP_UUID_LEN_16,
@@ -462,6 +471,13 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
                                   ESP_GATT_CHAR_PROP_BIT_READ | ESP_GATT_CHAR_PROP_BIT_NOTIFY,
                                   NULL, NULL);
             break;
+        
+        case ESP_GATTS_START_EVT:
+        ESP_LOGI(TAG, "Service started, starting advertising...");
+        
+        // Just start advertising - characteristics already added in CREATE_EVT
+        esp_ble_gap_start_advertising(&adv_params); 
+        break;
             
         case ESP_GATTS_ADD_CHAR_EVT:
             ESP_LOGI(TAG, "Characteristic added, char_handle: %d, uuid: 0x%04x",
@@ -479,12 +495,6 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
                     char_status_handle = param->add_char.attr_handle;
                     break;
             }
-            break;
-            
-        case ESP_GATTS_START_EVT:
-            ESP_LOGI(TAG, "Service started, starting advertising...");
-            
-            esp_ble_gap_start_advertising(&adv_params);
             break;
             
         case ESP_GATTS_CONNECT_EVT:
