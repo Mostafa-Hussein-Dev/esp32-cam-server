@@ -1,7 +1,7 @@
 {
     "version":            "1.2",
     "project_name":       "esp32_cam_server",
-    "project_version":    "1",
+    "project_version":    "e1469816-dirty",
     "project_path":       "C:/Users/MostafaHussein/Desktop/Embedded Systems Project/esp32_cam_server",
     "idf_path":           "C:/Espressif/frameworks/esp-idf-v5.4.1",
     "build_dir":          "C:/Users/MostafaHussein/Desktop/Embedded Systems Project/esp32_cam_server/build",

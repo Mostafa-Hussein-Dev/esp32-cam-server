@@ -10633,10 +10633,7 @@
                                 "help": "BR/EDR default minimum size of encryption key when start encryption.",
                                 "id": "BTDM_CTRL_BR_EDR_MIN_ENC_KEY_SZ_DFT",
                                 "name": "BTDM_CTRL_BR_EDR_MIN_ENC_KEY_SZ_DFT",
-                                "range": [
-                                    7,
-                                    16
-                                ],
+                                "range": null,
                                 "title": "BR/EDR default minimum size of encryption key",
                                 "type": "int"
                             },
@@ -10646,10 +10643,7 @@
                                 "help": "BR/EDR ACL maximum connections of bluetooth controller.\nEach connection uses 1.2 KB DRAM whenever the BT controller is enabled.",
                                 "id": "BTDM_CTRL_BR_EDR_MAX_ACL_CONN",
                                 "name": "BTDM_CTRL_BR_EDR_MAX_ACL_CONN",
-                                "range": [
-                                    1,
-                                    7
-                                ],
+                                "range": null,
                                 "title": "BR/EDR ACL Max Connections",
                                 "type": "int"
                             },
@@ -10659,10 +10653,7 @@
                                 "help": "BR/EDR Synchronize maximum connections of bluetooth controller.\nEach connection uses 2 KB DRAM whenever the BT controller is enabled.",
                                 "id": "BTDM_CTRL_BR_EDR_MAX_SYNC_CONN",
                                 "name": "BTDM_CTRL_BR_EDR_MAX_SYNC_CONN",
-                                "range": [
-                                    0,
-                                    3
-                                ],
+                                "range": null,
                                 "title": "BR/EDR Sync(SCO/eSCO) Max Connections",
                                 "type": "int"
                             },

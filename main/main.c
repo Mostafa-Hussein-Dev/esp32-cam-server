@@ -47,6 +47,8 @@ static const char* TAG = "ESP32_CAM_SERVER";
 #define DEVICE_NAME "ESP32CAMSLG"  // Sign Language Glove Camera
 #define MTU_SIZE 512
 
+#define ESP_APP_ID  0x55
+
 // Camera commands
 typedef enum {
     BLE_CAM_CMD_START_STREAM = 0x01,
@@ -111,10 +113,7 @@ void app_main() {
     
     // Initialize BLE
     ret = esp_bt_controller_mem_release(ESP_BT_MODE_CLASSIC_BT);
-    if (ret) {
-        ESP_LOGI(TAG, "Bluetooth controller release failed: %s", esp_err_to_name(ret));
-    }
-    
+
     esp_bt_controller_config_t bt_cfg = BT_CONTROLLER_INIT_CONFIG_DEFAULT();
     ret = esp_bt_controller_init(&bt_cfg);
     if (ret != ESP_OK) {
@@ -122,7 +121,7 @@ void app_main() {
         return;
     }
 
-    ret = esp_bt_controller_enable(ESP_BT_MODE_BTDM);
+    ret = esp_bt_controller_enable(ESP_BT_MODE_BLE);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "BT controller enable failed: %s", esp_err_to_name(ret));
         return;
@@ -139,34 +138,30 @@ void app_main() {
         ESP_LOGE(TAG, "Bluedroid enable failed: %s", esp_err_to_name(ret));
         return;
     }
+
+    esp_ble_gap_conn_params_t gap_conn_params = {
+        .interval_min = 0x10,     // 20ms
+        .interval_max = 0x20,     // 40ms  
+        .latency = 0,
+        .supervision_timeout = 400 // 4s
+    };
+
+    ret = esp_ble_gap_register_callback(gap_event_handler);
+    ESP_ERROR_CHECK(ret);
     
+    ret = esp_ble_gatts_register_callback(gatts_event_handler);
+    ESP_ERROR_CHECK(ret);
+
+    // CRITICAL: Register app with specific app_id
+    ret = esp_ble_gatts_app_register(ESP_APP_ID);
+    ESP_ERROR_CHECK(ret);
+
+    // Set device name
     ret = esp_ble_gap_set_device_name(DEVICE_NAME);
-    if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Set device name failed: %s", esp_err_to_name(ret));
-        return;
-    }
+    ESP_ERROR_CHECK(ret);
+
     ESP_LOGI(TAG, "Device name set to: %s", DEVICE_NAME);
 
-    // Register callbacks
-    ret = esp_ble_gap_register_callback(gap_event_handler);
-    if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "GAP callback register failed: %s", esp_err_to_name(ret));
-        return;
-    }
-
-    ret = esp_ble_gatts_register_callback(gatts_event_handler);
-    if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "GATTS callback register failed: %s", esp_err_to_name(ret));
-        return;
-    }
-
-    ret = esp_ble_gatts_app_register(0);
-    if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "GATTS app register failed: %s", esp_err_to_name(ret));
-        return;
-    }
-
-    
     // Create camera task
     xTaskCreatePinnedToCore(camera_task, "camera_task", 8192, NULL, 5, &camera_task_handle, 1);
     
@@ -271,7 +266,7 @@ static void camera_task(void *arg) {
                     
                 case BLE_CAM_CMD_SET_RESOLUTION:
                     if (cmd.data_len >= 2) {
-                        uint8_t width_code = cmd.data[0];
+                        uint16_t width_code = cmd.data[0];
                         framesize_t new_size = FRAMESIZE_QVGA;
                         
                         switch (width_code) {
@@ -440,26 +435,18 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
                 .uuid.uuid16 = BLE_CAMERA_CHAR_IMAGE_UUID
             };
             esp_ble_gatts_add_char(service_handle, &char_image_uuid,
-                                  ESP_GATT_PERM_READ,
-                                  ESP_GATT_CHAR_PROP_BIT_READ | ESP_GATT_CHAR_PROP_BIT_NOTIFY,
-                                  NULL, NULL);
+                      ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE,  // ADD WRITE
+                      ESP_GATT_CHAR_PROP_BIT_READ | ESP_GATT_CHAR_PROP_BIT_NOTIFY,
+                      NULL, NULL);
             
             esp_bt_uuid_t char_control_uuid = {
                 .len = ESP_UUID_LEN_16,
                 .uuid.uuid16 = BLE_CAMERA_CHAR_CONTROL_UUID
             };
-            esp_attr_value_t char_val = {
-                .attr_max_len = 64,
-                .attr_len = 0,
-                .attr_value = NULL,
-            };
-            esp_attr_control_t control = {
-                .auto_rsp = ESP_GATT_AUTO_RSP,
-            };
             esp_ble_gatts_add_char(service_handle, &char_control_uuid,
-                        ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE,  // Both read AND write permission
-                        ESP_GATT_CHAR_PROP_BIT_WRITE,               // Write property
-                        &char_val, &control);
+                      ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE,  // ADD WRITE
+                      ESP_GATT_CHAR_PROP_BIT_READ | ESP_GATT_CHAR_PROP_BIT_WRITE,
+                      NULL, NULL);
 
             
             esp_bt_uuid_t char_status_uuid = {
@@ -467,9 +454,10 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
                 .uuid.uuid16 = BLE_CAMERA_CHAR_STATUS_UUID
             };
             esp_ble_gatts_add_char(service_handle, &char_status_uuid,
-                                  ESP_GATT_PERM_READ,
-                                  ESP_GATT_CHAR_PROP_BIT_READ | ESP_GATT_CHAR_PROP_BIT_NOTIFY,
-                                  NULL, NULL);
+                                ESP_GATT_PERM_READ | ESP_GATT_PERM_WRITE,  // ADD WRITE
+                                ESP_GATT_CHAR_PROP_BIT_READ | ESP_GATT_CHAR_PROP_BIT_NOTIFY,
+                                 NULL, NULL);
+                    
             break;
         
         case ESP_GATTS_START_EVT:
@@ -498,11 +486,22 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
             break;
             
         case ESP_GATTS_CONNECT_EVT:
-            ESP_LOGI(TAG, "Client connected, conn_id: %d", param->connect.conn_id);
+            ESP_LOGI(TAG, "Client connect event: conn_id=%d", param->connect.conn_id);
+            
+            /*
+            if (param->connect.conn_id == 0) {
+                ESP_LOGE(TAG, "CRITICAL: Invalid conn_id=0 - disconnecting client");
+                esp_ble_gatts_close(gatts_if, param->connect.conn_id);
+                break;
+            }
+            */
+            
             conn_id = param->connect.conn_id;
             client_connected = true;
             
-            // Update connection parameters for better throughput
+            ESP_LOGI(TAG, "✓ Client connected with valid conn_id: %d", conn_id);
+            
+            // Update connection parameters for better stability
             esp_ble_conn_update_params_t conn_params = {0};
             memcpy(conn_params.bda, param->connect.remote_bda, sizeof(esp_bd_addr_t));
             conn_params.latency = 0;
@@ -518,10 +517,7 @@ static void gatts_event_handler(esp_gatts_cb_event_t event, esp_gatt_if_t gatts_
             ESP_LOGI(TAG, "Client disconnected, conn_id: %d", param->disconnect.conn_id);
             client_connected = false;
             streaming_active = false;
-            conn_id = 0xFFFF;
-            
-            // Restart advertising
-            esp_ble_gap_start_advertising(&adv_params);
+            conn_id = 0;
             break;
             
         case ESP_GATTS_WRITE_EVT:
